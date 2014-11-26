@@ -1,0 +1,279 @@
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * A SkipList is a randomized multi-level linked list
+ * 
+ * @param <T>
+ *            The generic type of the list.
+ */
+public class SkipList<T extends Comparable<? super T>>
+{
+
+	private Node root; // dummy header node. You may want a dummy tail node as
+						// well.
+	private int numNodesVisited;
+	private Random randomizer;
+	// private Node tail; // dummy tail
+
+	private static int MAX_LINKS = 10;
+
+	/**
+	 * Creates a skip list with truly random numbers. We won't use this
+	 * constructor for our tests.
+	 */
+	public SkipList()
+	{
+		this.randomizer = new Random();
+		reset();
+	}
+
+	/**
+	 * Creates a SkipList with a given fixed seed. This is better for testing.
+	 * 
+	 * @param seed
+	 *            A random seed.
+	 */
+	public SkipList(int seed)
+	{
+		this.randomizer = new Random(seed);
+		reset();
+	}
+
+	// Creates the skip list's root and end nodes and does any other
+	// initialization needed.
+	private void reset()
+	{
+		// DONE: implement
+		this.numNodesVisited = 0;
+		this.root = new Node(null);
+		for (int i = 0; i < MAX_LINKS; i++)
+		{
+			this.root.links.add(null);
+		}
+	}
+
+	/**
+	 * Grabs the next random integer from the array
+	 * 
+	 * @return 0 or 1.
+	 */
+	public int getRand()
+	{
+		int temp = this.randomizer.nextInt(2);
+		// Uncomment to see random values generated.
+		// System.out.println("Random = " + temp);
+		return temp;
+	}
+
+	/**
+	 * @return the root node
+	 */
+	public Node getRoot()
+	{
+		return this.root;
+	}
+
+	/**
+	 * Inserts the elements in the array in the SkipList in order, then iterates
+	 * through the list, copying them back into the array, thus sorting the
+	 * array.
+	 * 
+	 * @param array
+	 */
+	public void sort(T[] array)
+	{
+		// (For the next assignment, not this one.)
+
+		// TODO: Increase MAX_LINKS, since 10 will be too small when sorting
+		// large arrays.
+
+		this.reset();
+		// TODO: finish implementing sort.
+
+	}
+
+	/**
+	 * Inserts the given element in the list
+	 * 
+	 * @param e
+	 * @return true if successful; false otherwise
+	 */
+	public boolean insert(T e)
+	{
+		// DONE: implement.
+		return this.root.insert(e);
+	}
+
+	/**
+	 * Removes the given element from the list
+	 * 
+	 * @param e
+	 * @return true if successful; false otherwise
+	 */
+	public boolean remove(T e)
+	{
+		// TODO: implement.
+		return false;
+	}
+
+	/**
+	 * @return the number of nodes visited during insertion and removal
+	 */
+	public int getNodesVisited()
+	{
+		return this.numNodesVisited;
+	}
+
+	public void nodeVisited()
+	{
+		this.numNodesVisited++;
+	}
+
+	@Override
+	public String toString()
+	{
+		// DONE: implement.
+		StringBuilder sb = new StringBuilder();
+		Node current = this.root;
+		sb.append("[");
+		while(current.links.get(0) != null)
+		{
+			sb.append(current.toString());
+			sb.append(", ");
+			current = current.links.get(0);
+		}
+		String str = sb.substring(0	, sb.length());
+		str += "]";
+		return str;
+	}
+
+	/**
+	 * A Node holds data and links to the next node on its levels.
+	 * 
+	 */
+	public class Node
+	{
+		private T element;
+		private ArrayList<Node> links;
+
+		public Node() {
+			this.element= null;
+			this.links = new ArrayList<Node>();
+		}
+		// DONE: implement whatever else is needed for this class.
+		// You should not add any more fields.
+		/**
+		 * Instantiates this node with the given element and links
+		 * 
+		 * @param e
+		 * @param size
+		 */
+		public Node(T e)
+		{
+			this.element = e;
+			this.links = new ArrayList<Node>();
+			while(getRand() == 1)
+			{
+				this.links.add(null);
+			}
+		}
+
+		/**
+		 * Returns the list of links this node is holding
+		 * 
+		 * @return a list of links
+		 */
+		public ArrayList<Node> getLinks()
+		{
+			return this.links;
+		}
+
+		/**
+		 * @return this node's element
+		 */
+		public T getElement()
+		{
+			return this.element;
+		}
+		
+		public String toString()
+		{
+			if(this.getElement() == null)
+			{
+				System.out.println("element is null");
+				return "null";
+			}
+			return this.getElement().toString();
+		}
+
+		public boolean insert(T e)
+		{
+			//System.out.println("1 " + getNodesVisited());
+			Node current = this;
+
+			//nodeVisited();
+
+			//System.out.println("test");
+			while (current.links.get(0) != null)
+			{
+				nodeVisited();
+				//System.out.println("in WHILE LOOP");
+				int i;
+				for (i = current.links.size() - 1; i > 0; i--)
+				{
+					//nodeVisited();
+					//System.out.println("3 " + getNodesVisited());
+					if (current.links.get(i) != null)
+					{
+						if (e.compareTo(current.links.get(i).getElement()) > 0)
+						{
+							//System.out.println("sldkjflka");
+							break;
+						}
+					}
+				}
+				//System.out.println("I ISSSSSSSSS: " + i);
+				if (current.links.get(i) != null)
+				{
+					//System.out.println("hi");
+					if (current.links.get(i).getElement().compareTo(e) == 0)
+					{
+						//.out.println('a');
+						{
+							// insert here at i
+							current.links.add(new Node(e));
+							//System.out.println("1 ADDING RETURNING");
+							return true;
+						}
+					}
+					else if (i - 1 > 0)
+					{
+						//System.out.println('b');
+						if (current.links.get(i - 1).getElement().compareTo(e) < 0
+								&& current.links.get(i + 1).getElement()
+										.compareTo(e) > 0)
+						{
+							// insert here at i
+							current.links.add(new Node(e));
+							//System.out.println("2 ADDING RETURNING");
+							return true;
+						}
+					}
+					//System.out.println("asfdadsfasdf i is: " + i);
+				}
+				
+				current = current.links.get(i);
+			}
+
+			if (current.equals(this))
+			{
+				//System.out.println("2 " + getNodesVisited());
+				current.links.add(new Node(e));
+				//System.out.println("3 ADDING RETURNING");
+				return true;
+			}
+			return true;
+		}
+	}
+}
